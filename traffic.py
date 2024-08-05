@@ -58,4 +58,65 @@ class TrafficLight:
         self.timer -= 1
         if self.timer <= 0:
             self.switch_to_next()
+
+  def detect_vehicle(self):
+        self.vehicle_sensor = randint(0, 1) == 1
+        if self.vehicle_sensor:
+            self.adjustment_factor = 1.5
+        else:
+            self.adjustment_factor = 1
+
+    def detect_emergency_vehicle(self):
+        self.emergency_vehicle_sensor = randint(0, 10) == 1
+        if self.emergency_vehicle_sensor:
+            self.state = GREEN
+
+    def __str__(self):
+        return f"{self.location} light is {self.state} (Timer: {self.timer}s, Cycles: {self.cycle_count}, Factor: {self.adjustment_factor}, Peak Hours: {self.peak_hours})"
+
+    def log_status(self):
+        with open(f"{self.location}_log.txt", "a") as log_file:
+            log_file.write(f"{time.ctime()}: {self}\n")
+
+# Pedestrian Crossing Class
+class PedestrianCrossing:
+    def __init__(self, location):
+        self.location = location
+        self.state = DONT_WALK
+        self.button_pressed = False
+        self.crossing_timer = 0
+        self.crossing_duration = 10
+        self.waiting_duration = 5
+        self.mode = "normal"  # Modes: "normal", "priority", "manual"
+
+    def switch_to_next(self):
+        if self.state == DONT_WALK:
+            if self.mode == "priority":
+                self.state = WALK
+                self.crossing_timer = self.crossing_duration * 2
+            else:
+                self.state = WALK
+                self.crossing_timer = self.crossing_duration
+        elif self.state == WALK:
+            self.state = WAITING
+            self.crossing_timer = self.waiting_duration
+        elif self.state == WAITING:
+            self.state = DONT_WALK
+            self.crossing_timer = 0
+
+    def press_button(self):
+        self.button_pressed = True
+
+    def tick(self):
+        if self.crossing_timer > 0:
+            self.crossing_timer -= 1
+        else:
+            if self.state == WALK:
+                self.switch_to_next()
+            elif self.state == WAITING:
+                self.switch_to_next()
+
+    def set_mode(self, mode):
+        if mode in ["normal", "priority", "manual"]:
+            self.mode = mode
     
