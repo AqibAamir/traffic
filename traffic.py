@@ -173,4 +173,61 @@ class TrafficLightGUI:
             label = tk.Label(self.light_frame, text=str(light), font=('Helvetica', 16))
             label.pack()
             self.labels[light.location] = label
+
+
+        for crossing in self.pedestrian_crossings:
+            label = tk.Label(self.crossing_frame, text=str(crossing), font=('Helvetica', 16))
+            label.pack()
+            self.labels[crossing.location] = label
+
+        self.control_frame = tk.Frame(self.root)
+        self.control_frame.pack(side=tk.BOTTOM, pady=10)
+        
+        self.start_button = tk.Button(self.control_frame, text="Start", command=self.start_simulation)
+        self.start_button.pack(side=tk.LEFT, padx=5)
+        
+        self.stop_button = tk.Button(self.control_frame, text="Stop", command=self.stop_simulation)
+        self.stop_button.pack(side=tk.LEFT, padx=5)
+        
+        self.reset_button = tk.Button(self.control_frame, text="Reset", command=self.reset_simulation)
+        self.reset_button.pack(side=tk.LEFT, padx=5)
+
+        self.sensor_frame = tk.Frame(self.root)
+        self.sensor_frame.pack(side=tk.TOP, pady=10)
+
+        self.vehicle_button = tk.Button(self.sensor_frame, text="Simulate Vehicle", command=self.simulate_vehicle)
+        self.vehicle_button.pack(side=tk.LEFT, padx=5)
+
+        self.emergency_button = tk.Button(self.sensor_frame, text="Simulate Emergency Vehicle", command=self.simulate_emergency_vehicle)
+        self.emergency_button.pack(side=tk.LEFT, padx=5)
+
+        self.pedestrian_button = tk.Button(self.sensor_frame, text="Press Pedestrian Button", command=self.press_pedestrian_button)
+        self.pedestrian_button.pack(side=tk.LEFT, padx=5)
+
+        # Additional GUI for controls and indicators
+        self.status_frame = tk.Frame(self.root)
+        self.status_frame.pack(side=tk.BOTTOM, pady=10)
+
+        self.status_label = tk.Label(self.status_frame, text="Status: Simulation not started", font=('Helvetica', 12))
+        self.status_label.pack()
+
+        self.log_errors_button = tk.Button(self.status_frame, text="View Error Log", command=self.view_error_log)
+        self.log_errors_button.pack(side=tk.LEFT, padx=5)
+
+        self.log_events_button = tk.Button(self.status_frame, text="View Event Log", command=self.view_event_log)
+        self.log_events_button.pack(side=tk.LEFT, padx=5)
+
+        # Additional controls for manual override
+        self.override_frame = tk.Frame(self.root)
+        self.override_frame.pack(side=tk.TOP, pady=10)
+
+        self.manual_override_button = tk.Button(self.override_frame, text="Manual Override", command=self.manual_override)
+        self.manual_override_button.pack(side=tk.LEFT, padx=5)
+
+        self.override_status_label = tk.Label(self.override_frame, text="Manual Override: OFF", font=('Helvetica', 12))
+        self.override_status_label.pack(side=tk.LEFT, padx=5)
+
+        # Controls for pedestrian crossing mode
+        self.mode_frame = tk.Frame(self.root)
+        self.mode_frame.pack(side=tk.TOP, pady=10)
     
