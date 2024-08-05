@@ -119,4 +119,58 @@ class PedestrianCrossing:
     def set_mode(self, mode):
         if mode in ["normal", "priority", "manual"]:
             self.mode = mode
+
+
+    def __str__(self):
+        return f"{self.location} crossing is {self.state} (Button Pressed: {self.button_pressed}, Timer: {self.crossing_timer}s, Mode: {self.mode})"
+
+    def log_status(self):
+        with open(f"{self.location}_log.txt", "a") as log_file:
+            log_file.write(f"{time.ctime()}: {self}\n")
+
+# Function to run the traffic light cycle
+def run_traffic_light(traffic_light):
+    while True:
+        print(traffic_light)
+        traffic_light.log_status()
+        time.sleep(1)
+        traffic_light.tick()
+        traffic_light.detect_vehicle()
+        traffic_light.detect_emergency_vehicle()
+        if traffic_light.emergency_vehicle_sensor:
+            traffic_light.state = GREEN
+
+# Function to run the pedestrian crossing cycle
+def run_pedestrian_crossing(crossing):
+    while True:
+        print(crossing)
+        crossing.log_status()
+        time.sleep(1)
+        crossing.tick()
+        if crossing.button_pressed:
+            crossing.switch_to_next()
+            crossing.button_pressed = False
+
+# GUI Class
+class TrafficLightGUI:
+    def __init__(self, root, traffic_lights, pedestrian_crossings):
+        self.root = root
+        self.traffic_lights = traffic_lights
+        self.pedestrian_crossings = pedestrian_crossings
+        self.labels = {}
+        self.running = False
+        self.threads = []
+        self.create_widgets()
+    
+    def create_widgets(self):
+        self.light_frame = tk.Frame(self.root)
+        self.light_frame.pack(side=tk.LEFT, padx=10)
+
+        self.crossing_frame = tk.Frame(self.root)
+        self.crossing_frame.pack(side=tk.RIGHT, padx=10)
+
+        for light in self.traffic_lights:
+            label = tk.Label(self.light_frame, text=str(light), font=('Helvetica', 16))
+            label.pack()
+            self.labels[light.location] = label
     
