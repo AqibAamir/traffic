@@ -230,4 +230,54 @@ class TrafficLightGUI:
         # Controls for pedestrian crossing mode
         self.mode_frame = tk.Frame(self.root)
         self.mode_frame.pack(side=tk.TOP, pady=10)
+
+
+        self.set_mode_button = tk.Button(self.mode_frame, text="Set Pedestrian Mode", command=self.set_pedestrian_mode)
+        self.set_mode_button.pack(side=tk.LEFT, padx=5)
+
+    def update_gui(self):
+        for light in self.traffic_lights:
+            self.labels[light.location].config(text=str(light))
+        for crossing in self.pedestrian_crossings:
+            self.labels[crossing.location].config(text=str(crossing))
+        if self.running:
+            self.root.after(1000, self.update_gui)
+
+    def start_simulation(self):
+        self.running = True
+        self.status_label.config(text="Status: Simulation Running")
+        self.update_gui()
+        for light in self.traffic_lights:
+            t = threading.Thread(target=run_traffic_light, args=(light,))
+            t.start()
+            self.threads.append(t)
+        for crossing in self.pedestrian_crossings:
+            t = threading.Thread(target=run_pedestrian_crossing, args=(crossing,))
+            t.start()
+            self.threads.append(t)
+
+    def stop_simulation(self):
+        self.running = False
+        self.status_label.config(text="Status: Simulation Stopped")
+        for t in self.threads:
+            if t.is_alive():
+                t.join()
+
+    def reset_simulation(self):
+        self.stop_simulation()
+        for light in self.traffic_lights:
+            light.state = RED
+            light.timer = 0
+            light.cycle_count = 0
+            light.adjustment_factor = 1
+        for crossing in self.pedestrian_crossings:
+            crossing.state = DONT_WALK
+            crossing.button_pressed = False
+            crossing.crossing_timer = 0
+        self.update_gui()
+
+    def simulate_vehicle(self):
+        for light in self.traffic_lights:
+            light.detect_vehicle()
+
     
