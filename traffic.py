@@ -280,4 +280,54 @@ class TrafficLightGUI:
         for light in self.traffic_lights:
             light.detect_vehicle()
 
+
+    def simulate_emergency_vehicle(self):
+        for light in self.traffic_lights:
+            light.detect_emergency_vehicle()
+
+    def press_pedestrian_button(self):
+        for crossing in self.pedestrian_crossings:
+            crossing.press_button()
+
+    def manual_override(self):
+        for light in self.traffic_lights:
+            light.state = GREEN
+            light.timer = 5
+        self.override_status_label.config(text="Manual Override: ON")
+
+    def view_error_log(self):
+        self.show_log(ERROR_LOG_FILE_PATH)
+
+    def view_event_log(self):
+        self.show_log(SENSOR_LOG_FILE_PATH)
+
+    def show_log(self, file_name):
+        try:
+            with open(file_name, "r") as log_file:
+                content = log_file.read()
+        except FileNotFoundError:
+            content = "Log file not found."
+        log_window = tk.Toplevel(self.root)
+        log_window.title(f"View {file_name}")
+        log_text = tk.Text(log_window, wrap=tk.WORD, height=20, width=80)
+        log_text.pack()
+        log_text.insert(tk.END, content)
+        log_text.config(state=tk.DISABLED)
+
+    def set_pedestrian_mode(self):
+        mode = choice(["normal", "priority", "manual"])
+        for crossing in self.pedestrian_crossings:
+            crossing.set_mode(mode)
+        print(f"Pedestrian crossing mode set to {mode}")
+
+# Detailed logging functions
+def log_start():
+    with open(LOG_FILE_PATH, "a") as log_file:
+        log_file.write(f"{time.ctime()}: Simulation started\n")
+
+def log_stop():
+    with open(LOG_FILE_PATH, "a") as log_file:
+        log_file.write(f"{time.ctime()}: Simulation stopped\n")
+
+
     
