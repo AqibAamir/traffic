@@ -429,4 +429,68 @@ class ExtendedPedestrianCrossing(PedestrianCrossing):
         return f"{self.location} crossing is {self.state} (Button Pressed: {self.button_pressed}, Timer: {self.crossing_timer}s, Mode: {self.mode}, Emergency Mode: {self.emergency_mode})"
 
 
+# Extended GUI Class
+class ExtendedTrafficLightGUI(TrafficLightGUI):
+    def __init__(self, root, traffic_lights, pedestrian_crossings):
+        super().__init__(root, traffic_lights, pedestrian_crossings)
+        
+        # Emergency Mode Button
+        self.emergency_frame = tk.Frame(self.root)
+        self.emergency_frame.pack(side=tk.TOP, pady=10)
+
+        self.activate_emergency_button = tk.Button(self.emergency_frame, text="Activate Emergency Mode", command=self.activate_emergency_mode)
+        self.activate_emergency_button.pack(side=tk.LEFT, padx=5)
+
+    def activate_emergency_mode(self):
+        for crossing in self.pedestrian_crossings:
+            if isinstance(crossing, ExtendedPedestrianCrossing):
+                crossing.activate_emergency_mode()
+        print("Emergency mode activated for pedestrian crossings.")
+
+# Additional Simulation Controls
+def log_traffic_light_state():
+    with open(LOG_FILE_PATH, "a") as log_file:
+        for light in traffic_lights:
+            log_file.write(f"{time.ctime()}: {light}\n")
+
+def log_pedestrian_crossing_state():
+    with open(LOG_FILE_PATH, "a") as log_file:
+        for crossing in pedestrian_crossings:
+            log_file.write(f"{time.ctime()}: {crossing}\n")
+
+# Enhanced Simulation Control Functions
+def simulate_all():
+    simulate_vehicle_with_logging()
+    simulate_emergency_vehicle_with_logging()
+    press_pedestrian_button_with_logging()
+    print("Simulated all events: vehicle, emergency vehicle, and pedestrian button.")
+
+# Main Function with Enhanced Error Handling
+def main_with_error_handling():
+    try:
+        root = tk.Tk()
+        root.title("Extended Traffic Light System")
+        gui = ExtendedTrafficLightGUI(root, traffic_lights, pedestrian_crossings)
+        root.mainloop()
+    except Exception as e:
+        log_simulation_error("Main Function", str(e))
+
+# Create extended traffic lights and pedestrian crossings
+extended_traffic_lights = [TrafficLight(f"{i+1}th and Main") for i in range(6)]
+extended_pedestrian_crossings = [ExtendedPedestrianCrossing(f"{i+1}th and Main") for i in range(6)]
+
+# Use the extended GUI class for the application
+def run_extended_simulation():
+    root = tk.Tk()
+    root.title("Extended Traffic Light System")
+    gui = ExtendedTrafficLightGUI(root, extended_traffic_lights, extended_pedestrian_crossings)
+    root.mainloop()
+
+# Call the extended simulation
+if __name__ == "__main__":
+    run_extended_simulation()
+
+
+
+
     
