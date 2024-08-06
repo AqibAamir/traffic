@@ -330,4 +330,50 @@ def log_stop():
         log_file.write(f"{time.ctime()}: Simulation stopped\n")
 
 
+def log_reset():
+    with open(LOG_FILE_PATH, "a") as log_file:
+        log_file.write(f"{time.ctime()}: Simulation reset\n")
+
+def log_sensor_event(event):
+    with open(SENSOR_LOG_FILE_PATH, "a") as log_file:
+        log_file.write(f"{time.ctime()}: {event}\n")
+
+def log_error(error_message):
+    with open(ERROR_LOG_FILE_PATH, "a") as log_file:
+        log_file.write(f"{time.ctime()}: ERROR - {error_message}\n")
+
+# Create a list of traffic lights and pedestrian crossings
+traffic_lights = [
+    TrafficLight("1st and Main"),
+    TrafficLight("2nd and Main"),
+    TrafficLight("3rd and Main"),
+    TrafficLight("4th and Main"),
+    TrafficLight("5th and Main"),
+    TrafficLight("6th and Main")
+]
+
+pedestrian_crossings = [
+    PedestrianCrossing("1st and Main"),
+    PedestrianCrossing("2nd and Main"),
+    PedestrianCrossing("3rd and Main"),
+    PedestrianCrossing("4th and Main"),
+    PedestrianCrossing("5th and Main"),
+    PedestrianCrossing("6th and Main")
+]
+
+# Setup the GUI
+root = tk.Tk()
+root.title("Traffic Light System")
+gui = TrafficLightGUI(root, traffic_lights, pedestrian_crossings)
+
+# Simulation control with logging
+def start_simulation_with_logging():
+    log_start()
+    gui.start_simulation()
+
+def stop_simulation_with_logging():
+    log_stop()
+    gui.stop_simulation()
+
+
     
