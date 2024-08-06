@@ -376,4 +376,57 @@ def stop_simulation_with_logging():
     gui.stop_simulation()
 
 
+def reset_simulation_with_logging():
+    log_reset()
+    gui.reset_simulation()
+
+def simulate_vehicle_with_logging():
+    log_sensor_event("Vehicle detected")
+    gui.simulate_vehicle()
+
+def simulate_emergency_vehicle_with_logging():
+    log_sensor_event("Emergency vehicle detected")
+    gui.simulate_emergency_vehicle()
+
+def press_pedestrian_button_with_logging():
+    log_sensor_event("Pedestrian button pressed")
+    gui.press_pedestrian_button()
+
+# Main function to run the GUI
+def main():
+    try:
+        root.mainloop()
+    except Exception as e:
+        log_error(str(e))
+
+# Enhanced Error Handling and Simulation Controls
+
+# Function to log simulation errors with context
+def log_simulation_error(context, error_message):
+    with open(ERROR_LOG_FILE_PATH, "a") as log_file:
+        log_file.write(f"{time.ctime()}: ERROR in {context} - {error_message}\n")
+
+# Extended Pedestrian Crossing Class
+class ExtendedPedestrianCrossing(PedestrianCrossing):
+    def __init__(self, location):
+        super().__init__(location)
+        self.emergency_mode = False
+
+    def switch_to_next(self):
+        if self.emergency_mode:
+            self.state = WALK
+            self.crossing_timer = self.crossing_duration
+            self.emergency_mode = False
+        else:
+            super().switch_to_next()
+
+    def activate_emergency_mode(self):
+        self.emergency_mode = True
+        self.state = WALK
+        self.crossing_timer = self.crossing_duration
+
+    def __str__(self):
+        return f"{self.location} crossing is {self.state} (Button Pressed: {self.button_pressed}, Timer: {self.crossing_timer}s, Mode: {self.mode}, Emergency Mode: {self.emergency_mode})"
+
+
     
